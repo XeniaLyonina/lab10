@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xenia Lyonina</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<style>
+    th {
+        padding: 5px;
+        font-weight: 400;
+        background: plum;
+        width: 100px;
+        border-radius: 5px;
+    }
+    td {
+        text-align: center;
+        padding: 20px;
+        background: pink;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .last-week-day {
+        color: #ffffff;
+        background: powderblue;
+
+    }
+</style>
+<body>
+<input type="date" class="date">
+<script>
+    $(function () {
+        $("body").append(`
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i>Понедельник</i></th>
+                        <th><i>Вторник</i></th>
+                        <th><i>Среда</i></th>
+                        <th><i>Четверг</i></th>
+                        <th><i>Пятница</i></th>
+                        <th><i>Суббота</i></th>
+                        <th><i>Воскресенье</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        `);
+    })
+
+    const dateInput = $(".date");
+
+    dateInput.on("change", function () {
+        // Очистка календаря
+        $("tbody").empty();
+
+        let date = new Date(dateInput.val());
+        let year = date.getFullYear();
+        let month = date.getMonth();
+        let flag = false;
+        let firstDay = new Date(year, month, 1).getDay();
+        let lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+
+        // Добавление отступов до первого дня
+        const tr = $("tbody").append("<tr></tr>");
+        for (let i = 1; i < firstDay; i++) {
+            tr.append(`<td></td>`);
+        }
+
+        // Добавление дней в календарь
+        for (let i = 1; i <= lastDateOfMonth; i++) {
+            if (flag) {
+                $("tbody").append("<tr></tr>");
+            }
+
+            flag = false;
+            const td = $(`<td>${i}</td>`);
+            tr.append(td);
+
+            if ((firstDay + i - 1) % 7 === 0) {
+                td.addClass("last-week-day");
+                flag = true;
+            }
+        }
+    })
+</script>
+</body>
+</html>

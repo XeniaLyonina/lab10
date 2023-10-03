@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xenia Lyonina</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<style>
+    th {
+        padding: 5px;
+        font-weight: 400;
+        background: plum;
+        width: 100px;
+    }
+    td {
+        text-align: center;
+        padding: 20px;
+        background: pink;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .last-week-day {
+        color: #ffffff;
+        background:powderblue;
+    }
+    .modal {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        align-items: center;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0 , .5);
+    }
+    .modal-block {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        height: 300px;
+        background: #ffffff;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .modal-block textarea {
+        flex: 1 1 auto;
+        font-size: 20px;
+    }
+    .task {
+        background: skyblue;
+    }
+</style>
+<body>
+<input type="date" class="date">
+<div class="modal">
+    <div class="modal-block">
+        <textarea></textarea>
+        <button class="save">Сохранить</button>
+        <button class="close">Выйти</button>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".modal").hide();
+        $("body").append(`
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i>Понедельник</i></th>
+                        <th><i>Вторник</i></th>
+                        <th><i>Среда</i></th>
+                        <th><i>Четверг</i></th>
+                        <th><i>Пятница</i></th>
+                        <th><i>Суббота</i></th>
+                        <th><i>Воскресенье</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        `);
+    })
+
+    const dateInput = $(".date");
+
+    // Переменные для даты
+    let date = null;
+    let year = null;
+    let month = null;
+    let selectedDay = null;
+    let selectedTd = null;
+
+    dateInput.on("change", function () {
+        // Очистка календаря
+        $("tbody").empty();
+
+        date = new Date(dateInput.val());
+        year = date.getFullYear();
+        month = date.getMonth();
+        let flag = false;
+        let firstDay = new Date(year, month, 1).getDay();
+        let lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+
+        // Добавление отступов до первого дня
+        const tr = $("tbody").append("<tr></tr>");
+        for (let i = 1; i < firstDay; i++) {
+            tr.append(`<td></td>`);
+        }
+        // Добавление дней в календарь
+        for (let i = 1; i <= lastDateOfMonth; i++) {
+            const td = $(`<td>${i}</td>`);
+
+            // Если имеется событие в localStorage тогда изменим цвет
+            if (localStorage.getItem([i, month, year].join("/"))) {
+                td.addClass("task");
+            }
+
+            if (flag) {
+                $("tbody").append("<tr></tr>");
+            }
+
+            flag = false;
+            tr.append(td);
+
+            if ((firstDay + i - 1) % 7 === 0) {
+                td.addClass("last-week-day");
+                flag = true;
+            }
+        }
+
+        $("td").click(function () {
+            selectedDay = $(this).text();
+            selectedTd = $(this);
+            $(".modal").show(500);
+            $("textarea").val(localStorage.getItem([selectedDay, month, year].join("/")));
+        })
+
+    })
+    $(".close").click(function () {
+        $("textarea").val("");
+        $(".modal").hide(500);
+    })
+
+    $(".save").click(function () {
+        selectedTd.addClass("task");
+        localStorage.setItem([selectedDay, month, year].join("/"), $("textarea").val());
+    })
+</script>
+</body>
+</html>

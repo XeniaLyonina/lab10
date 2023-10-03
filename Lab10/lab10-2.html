@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xenia Lyonina</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<style>
+    .message {
+        display: none;
+    }
+    .number, .sign {
+        padding: 5px;
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 5px;
+        color: black;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+    .number:hover, .sign:hover {
+        transform: scale(1.1);
+        transition: all .2s ease;
+    }
+    .number {
+        background: plum;
+    }
+    .sign {
+        background: paleturquoise;
+    }
+</style>
+<body>
+    <input type="text" class="input_value">
+    <br>
+    <br>
+    <button class="number">1</button>
+    <button class="number">2</button>
+    <button class="number">3</button>
+    <button class="number">4</button>
+    <button class="number">5</button>
+    <button class="number">6</button>
+    <button class="number">7</button>
+    <button class="number">8</button>
+    <button class="number">9</button>
+    <button class="number">0</button>
+    <br>
+    <br>
+    <button class="sign">+</button>
+    <button class="sign">-</button>
+    <button class="sign">/</button>
+    <button class="sign">*</button>
+    <br>
+    <br>
+    <input type="text" placeholder="Ответ" class="resolve">
+    <button class="calc">Вычислить</button>
+    <button class="clear">Очистить</button>
+    <button class="save">Сохранить</button>
+    <br>
+    <span class="message">Ответ сохранен.</span>
+<script>
+    $(document).keyup(function(e) {
+        let value = e.originalEvent.key;
+        let isNumber = !isNaN(value);
+        const signs = ["+", "-", "*", "/"];
+
+        if (isNumber || inArray(value, signs)) {
+            addToInputField(value);
+        }
+    });
+
+
+    const inputField = $(".input_value");
+    const resolveField = $(".resolve");
+    const message = $(".message");
+    message.hide();
+
+    function inArray (str, arr) {
+        return arr.indexOf(str) != -1;
+    }
+
+    function addToInputField (str) {
+        inputField.val(inputField.val() + str);
+    }
+
+    $(".number, .sign").click(function () {
+        addToInputField($(this).text());
+    })
+    $(".clear").click(function () {
+        inputField.val("");
+        resolveField.val("");
+    })
+    $(".calc").click(function () {
+        resolveField.val(eval(inputField.val()));
+    })
+    $(".save").click(function () {
+        message.show(1000, function () {
+            setTimeout(function(){
+                message.hide(500);
+            }, 3000);
+        });
+        localStorage.setItem("resolve", eval(inputField.val()));
+    })
+</script>
+</body>
+</html>

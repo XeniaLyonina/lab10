@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xenia Lyonina</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<style>
+    .table {
+        user-select: none;
+    }
+
+    .table th {
+        padding: 5px 10px;
+        background: rgb(184, 189, 194);
+        cursor: pointer;
+    }
+
+    .table > * {
+        background: rgb(240, 248, 255);
+        text-align: center;
+        padding: 5px;
+        border: 1px solid #000;
+    }
+</style>
+<body>
+<script>
+    class SoundCard {
+        constructor(analog_outputs, analog_inputs, microphone_inputs, type, number_of_channels, connection_interface) {
+            this.analog_outputs = analog_outputs;
+            this.analog_inputs = analog_inputs;
+            this.microphone_inputs = microphone_inputs;
+            this.type=type;
+            this.number_of_channels=number_of_channels;
+            this.connection_interface=connection_interface;
+        }
+    }
+    const SoundCardArray = [
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 8, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "нет", "внешняя", 4, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 8, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 6, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 8, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 8, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "нет", "внешняя", 17, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 8, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "нет", "внешняя", 16, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 3, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "нет", "внешняя", 8, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 2, "PCI"),
+        new SoundCard("Мониторный выход", "Линейный вход", "да", "внешняя", 8, "PCI"),
+    ];
+    // Загрузка данных в localStorage
+    localStorage.setItem("array", JSON.stringify(SoundCardArray));
+
+    $(function () {
+        $("body").append(`
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="string">Аналоговые выходы</th>
+                        <th class="string">Аналоговые входы</th>
+                        <th class="string">Микрофонные входы</th>
+                        <th class="string">Тип</th>
+                        <th class="number">Количество каналов</th>
+                        <th class="string">Интерфейс подключения</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `);
+
+        JSON.parse(localStorage.getItem("array")).forEach(element => {
+            $("table tbody").append(`
+                <tr>
+                    <td>${element.analog_outputs}</td>
+                    <td>${element.analog_inputs}</td>
+                    <td>${element.microphone_inputs}</td>
+                    <td>${element.type}</td>
+                    <td>${element.number_of_channels}</td>
+                    <td>${element.connection_interface}</td>
+                </tr>
+            `)
+        });
+        $("th").each(function (column) {
+            $(this).click(function () {
+                let type = $(this).attr("class");
+                let records = $("table").find("tbody > tr");
+
+                this.asc = !this.asc;
+
+                records.sort((a, b) => {
+                    let str1 = $(a).children("td").eq(column).text();
+                    let str2 = $(b).children("td").eq(column).text();
+                    return type === "number" ? str1 - str2 : str1.localeCompare(str2);
+                })
+
+                if (!this.asc) {
+                    records = records.toArray().reverse();
+                }
+
+                $.each(records, function (index, row) {
+                    $("tbody").append(row);
+                })
+            })
+        })
+    })
+</script>
+</body>
+</html>
